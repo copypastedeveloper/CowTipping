@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Timers;
 using CowTipping.Messages;
 using EasyNetQ;
 
@@ -19,10 +18,11 @@ namespace CowTippingService
         {
             _bus.Subscribe<TimeToTipACow>("CowTipping", message =>
             {
-                Thread.Sleep(2000);
-                Console.WriteLine($"It is {message.EventTime} and I tipped a cow named {message.NameOfCow}!");
+                var handler = new TimeToTipACowHandler();
+                handler.Handle(message);
             }, cfg => cfg.WithDurable());
         }
+
         public void Stop() { _bus.Dispose(); }
     }
 }
